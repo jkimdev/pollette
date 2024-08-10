@@ -15,6 +15,8 @@
 		BF0ACCBB2C5A1EF400F49191 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = BF0ACCBA2C5A1EF400F49191 /* Base */; };
 		BF0ACCBD2C5A1EF500F49191 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF0ACCBC2C5A1EF500F49191 /* Assets.xcassets */; };
 		BF0ACCC02C5A1EF500F49191 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = BF0ACCBF2C5A1EF500F49191 /* Base */; };
+		F546E7D92C675CD1005FE6A2 /* Galmuri11.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F546E7D62C675BEE005FE6A2 /* Galmuri11.ttf */; };
+		F546E7DD2C675F8C005FE6A2 /* Galmuri11-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F546E7DC2C675F8C005FE6A2 /* Galmuri11-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,9 @@
 		BF0ACCBA2C5A1EF400F49191 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		BF0ACCBC2C5A1EF500F49191 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF0ACCBF2C5A1EF500F49191 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F546E7D32C675988005FE6A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F546E7D62C675BEE005FE6A2 /* Galmuri11.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Galmuri11.ttf; sourceTree = "<group>"; };
+		F546E7DC2C675F8C005FE6A2 /* Galmuri11-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Galmuri11-Bold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +64,8 @@
 		BF0ACCAE2C5A1EF400F49191 /* pollette */ = {
 			isa = PBXGroup;
 			children = (
+				F546E7D32C675988005FE6A2 /* Info.plist */,
+				F546E7D02C67590C005FE6A2 /* Fonts */,
 				BF0ACCAF2C5A1EF400F49191 /* AppDelegate.swift */,
 				BF0ACCB12C5A1EF400F49191 /* GameScene.sks */,
 				BF0ACCB32C5A1EF400F49191 /* Actions.sks */,
@@ -69,6 +76,15 @@
 				BF0ACCBE2C5A1EF500F49191 /* LaunchScreen.storyboard */,
 			);
 			path = pollette;
+			sourceTree = "<group>";
+		};
+		F546E7D02C67590C005FE6A2 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				F546E7DC2C675F8C005FE6A2 /* Galmuri11-Bold.ttf */,
+				F546E7D62C675BEE005FE6A2 /* Galmuri11.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -132,8 +148,10 @@
 				BF0ACCB22C5A1EF400F49191 /* GameScene.sks in Resources */,
 				BF0ACCBB2C5A1EF400F49191 /* Base in Resources */,
 				BF0ACCBD2C5A1EF500F49191 /* Assets.xcassets in Resources */,
+				F546E7D92C675CD1005FE6A2 /* Galmuri11.ttf in Resources */,
 				BF0ACCB42C5A1EF400F49191 /* Actions.sks in Resources */,
 				BF0ACCC02C5A1EF500F49191 /* Base in Resources */,
+				F546E7DD2C675F8C005FE6A2 /* Galmuri11-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +318,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5H679H8G3X;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = pollette/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -328,6 +347,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5H679H8G3X;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = pollette/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
