@@ -143,8 +143,10 @@ class GameScene: SKScene {
         }
         if touchedNode.name == "playButton" {
             print("playButton")
-            let newScene = PlayScene()
-            scene?.view?.presentScene(newScene)
+            guard let skView = self.view else { return }
+            let newScene = PlayScene(size: skView.frame.size)
+            newScene.scaleMode = .aspectFill
+            self.view?.presentScene(newScene)
         }
     }
     
