@@ -9,7 +9,8 @@ import SpriteKit
 import GameplayKit
 
 class GameScene: SKScene {
-    let planets = ["earth", "moon", "mustafar", "uranus"]
+    var planetType: PlanetType = .earth
+//    let planets = ["earth", "moon", "mustafar", "uranus"]
     let imageNode = SKSpriteNode()
     let numberNode = SKLabelNode(text: "2")
     let ballLabel = SKLabelNode()
@@ -34,8 +35,8 @@ class GameScene: SKScene {
         gravityLabel.constraints = [gravityLabelConstraint]
         addChild(gravityLabel)
 
-        let earthNode = SKSpriteNode(imageNamed: "earth")
-        earthNode.name = "earth"
+        let earthNode = SKSpriteNode(imageNamed: planetType.rawValue)
+        earthNode.name = planetType.rawValue
         earthNode.size = .init(width: 120, height: 120)
         imageNode.addChild(earthNode)
         
@@ -145,6 +146,7 @@ class GameScene: SKScene {
             print("playButton")
             guard let skView = self.view else { return }
             let newScene = PlayScene(size: skView.frame.size)
+            newScene.planet = planetType
             newScene.scaleMode = .aspectFill
             self.view?.presentScene(newScene)
         }
@@ -153,9 +155,9 @@ class GameScene: SKScene {
     private func rightButtonAction() {
         imageNode.removeAllChildren()
         planetIdx += 1
-        let planetName = planets[planetIdx % planets.count]
-        let planetNode = SKSpriteNode(imageNamed: planetName)
-        planetNode.name = planetName
+        planetType = PlanetType.allCases[planetIdx % PlanetType.allCases.count]
+        let planetNode = SKSpriteNode(imageNamed: planetType.rawValue)
+        planetNode.name = planetType.rawValue
         planetNode.size = .init(width: 120, height: 120)
         imageNode.addChild(planetNode)
     }
@@ -163,9 +165,9 @@ class GameScene: SKScene {
     private func leftButtonAction() {
         imageNode.removeAllChildren()
         planetIdx -= 1
-        let planetName = planets[abs(planetIdx % planets.count)]
-        let planetNode = SKSpriteNode(imageNamed: planetName)
-        planetNode.name = planetName
+        planetType = PlanetType.allCases[abs(planetIdx % PlanetType.allCases.count)]
+        let planetNode = SKSpriteNode(imageNamed: planetType.rawValue)
+        planetNode.name = planetType.rawValue
         planetNode.size = .init(width: 96, height: 96)
         imageNode.addChild(planetNode)
     }
