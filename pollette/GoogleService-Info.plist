@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyDT7b46tDPRgWfPvXo_t9Rzra8ETlHCCno</string>
+	<key>GCM_SENDER_ID</key>
+	<string>587480717286</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.jimmythegenius.pollette</string>
+	<key>PROJECT_ID</key>
+	<string>pollette-f5339</string>
+	<key>STORAGE_BUCKET</key>
+	<string>pollette-f5339.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:587480717286:ios:d6162b3e23a507b3c7a827</string>
+</dict>
+</plist>
