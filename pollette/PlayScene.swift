@@ -26,19 +26,49 @@ public enum PlanetType: String, CaseIterable {
             return -8.69
         }
     }
+    
+    var duration: CGFloat {
+        switch self {
+        case .earth:
+            return 1
+        case .moon:
+            return 2.5
+        case .mustafar:
+            return 3
+        case .uranus:
+            return 1.5
+        }
+    }
+    
+    var caption: String {
+        switch self {
+        case .earth:
+            "창백한 푸른 점."
+        case .moon:
+            "FLY ME TO THE MOON."
+        case .mustafar:
+            "IT'S OVER ANAKIN."
+        case .uranus:
+            "천왕성, 얼음 거인."
+        }
+    }
 }
 
 class PlayScene: SKScene, SKPhysicsContactDelegate {
     let ballCategory: UInt32 = 0x1 << 0
     let groundCategory: UInt32 = 0x1 << 1
     let squareCategory: UInt32 = 0x1 << 2
+    let blackholeCatetory: UInt32 = 0x1 << 3
     
     var planet: PlanetType?
+    var numberOfBalls: Int?
     var balls: [SKShapeNode] = []
+    var ballColors: [UIColor] = [.red, .orange, .green, .purple, .yellow, .systemMint, .magenta, .blue].shuffled()
     
     override func sceneDidLoad() {
         self.physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+        self.physicsBody?.restitution = 0.8
     }
     
     override func didMove(to view: SKView) {
@@ -47,55 +77,66 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         let screenHeight = view.frame.height
         
         
-        self.physicsWorld.gravity = .init(dx: 0, dy: -0.2)
+        self.physicsWorld.gravity = .init(dx: 0, dy: planet!.gravity)
+        
+        let cameraNode = SKCameraNode()
+        
+        cameraNode.name = "winnerCameara"
+        cameraNode.position = .init(x: screenWidth / 2, y: screenHeight / 2)
+        
+        scene?.addChild(cameraNode)
+        scene?.camera = cameraNode
+        
         
         leftGround(view: view)
         rightGround(view: view)
         addBoxes(view: view)
+        addBlackhole(view: view)
+        createCaption(view: view)
         
-        let spinner = SKShapeNode(rectOf: .init(width: screenWidth / 2, height: 10))
-        spinner.physicsBody = SKPhysicsBody(rectangleOf: .init(width: screenWidth / 2, height: 10))
-        spinner.position = .init(x: screenWidth / 2, y: screenHeight / 2)
-        spinner.fillColor = .red
-        spinner.physicsBody?.angularVelocity = .pi
+        let spinner = SKShapeNode(rectOf: .init(width: screenWidth / 2.5, height: 10))
+        spinner.physicsBody = SKPhysicsBody(rectangleOf: .init(width: screenWidth / 2.5, height: 10))
+        spinner.position = .init(x: screenWidth / 2, y: 0)
+        spinner.fillColor = .clear
         spinner.physicsBody?.isDynamic = false
-        spinner.physicsBody?.angularDamping = 0.5
+        //        spinner.physicsBody?.restitution = 0.5
+        spinner.physicsBody?.angularDamping = .pi
+        spinner.physicsBody?.angularVelocity = .pi
+        spinner.physicsBody?.restitution = 0.8
+        spinner.physicsBody?.mass = 9
         
-        let rotateAction = SKAction.rotate(byAngle: .pi, duration: .pi)
+        let rotateAction = SKAction.rotate(byAngle: .pi, duration: planet!.duration)
         let repeatAction = SKAction.repeatForever(rotateAction)
         
         addChild(spinner)
         spinner.run(repeatAction)
         
-        for i in 1 ..< 5 {
+        for i in 0 ..< numberOfBalls! {
             let ball = SKShapeNode(circleOfRadius: 6)
+            ball.fillColor = ballColors[i]
             ball.physicsBody = SKPhysicsBody(circleOfRadius: 6)
             ball.position = .init(x: CGFloat(screenWidth / 2) + CGFloat(i), y: screenHeight * 0.9)
-            ball.physicsBody?.restitution = 0.5
+            ball.physicsBody?.mass = 0.1
             balls.append(ball)
         }
         balls.forEach { addChild($0) }
     }
     
-    private func addBall(view: SKView) {
-    }
-    
     private func rightGround(view: SKView) {
         let screenWidth = view.frame.width
         let screenHeight = view.frame.height
-
-        var points = [CGPoint(x: screenWidth / 1.25, y: 0),
-                      CGPoint(x: screenWidth / 8, y: -50),
-                      CGPoint(x: screenWidth * 0.02, y: -100)]
         
-        let ground = SKShapeNode(splinePoints: &points, count: points.count)
+        var points = [CGPoint(x: 0, y: screenHeight),
+                      CGPoint(x: 0, y: screenHeight * 0.2),
+                      CGPoint(x: screenWidth * -0.2, y: screenHeight * 0.1),
+                      CGPoint(x: screenWidth * -0.35, y: screenHeight * 0.08),
+                      CGPoint(x: screenWidth * -0.46, y: screenHeight * 0.06),
+                      CGPoint(x: screenWidth * -0.46, y: -screenHeight * 0.5)]
+        
+        let ground = SKShapeNode(points: &points, count: points.count)
         ground.physicsBody = SKPhysicsBody(edgeChainFrom: ground.path!)
-        ground.position = .init(x: screenWidth / 2, y: 100)
-        ground.physicsBody?.restitution = 0.5
-        ground.physicsBody?.friction = 0
-        
-        ground.physicsBody?.collisionBitMask = ballCategory
-        ground.physicsBody?.contactTestBitMask = ballCategory
+        ground.position = .init(x: screenWidth, y: 0)
+        ground.physicsBody?.restitution = 0.8
         
         self.addChild(ground)
     }
@@ -103,47 +144,130 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
     private func leftGround(view: SKView) {
         let screenWidth = view.frame.width
         let screenHeight = view.frame.height
-
-        var points = [CGPoint(x: -screenWidth / 1.25, y: 0),
-                      CGPoint(x: -screenWidth / 8, y: -50),
-                      CGPoint(x: -screenWidth * 0.02, y: -100)]
         
-        let ground = SKShapeNode(splinePoints: &points, count: points.count)
+        var points = [CGPoint(x: 0, y: screenHeight),
+                      CGPoint(x: 0, y: screenHeight * 0.2),
+                      CGPoint(x: screenWidth * 0.2, y: screenHeight * 0.1),
+                      CGPoint(x: screenWidth * 0.35, y: screenHeight * 0.08),
+                      CGPoint(x: screenWidth * 0.46, y: screenHeight * 0.06),
+                      CGPoint(x: screenWidth * 0.46, y: -screenHeight * 0.5)]
+        
+        let ground = SKShapeNode(points: &points, count: points.count)
         ground.physicsBody = SKPhysicsBody(edgeChainFrom: ground.path!)
-        ground.position = .init(x: screenWidth / 2, y: 100)
-        ground.physicsBody?.restitution = 0.5
-        
-        ground.physicsBody?.collisionBitMask = ballCategory
-        ground.physicsBody?.contactTestBitMask = ballCategory
+        ground.physicsBody?.restitution = 0.8
         
         self.addChild(ground)
+    }
+    
+    private func addBlackhole(view: SKView) {
+        let screenWidth = view.frame.width
+        
+        let blackholeImage = UIImage(named: "blackhole")
+        let blackholeTexture = SKTexture(image: blackholeImage!)
+        let blackhole = SKSpriteNode(texture: blackholeTexture)
+        blackhole.physicsBody = SKPhysicsBody(texture: blackholeTexture, size: .init(width: 48, height: 48))
+        blackhole.physicsBody?.isDynamic = false
+        blackhole.position = .init(x: screenWidth / 2, y: 12)
+        
+        blackhole.physicsBody?.collisionBitMask = ballCategory
+        blackhole.physicsBody?.contactTestBitMask = ballCategory
+        addChild(blackhole)
+        
     }
     
     private func addBoxes(view: SKView) {
         let screenWidth = view.frame.width
         let screenHeight = view.frame.height
-
-        for i in -2 ..< 3 {
-            let box = SKShapeNode(rectOf: .init(width: 24, height: 2))
-            box.physicsBody = SKPhysicsBody(rectangleOf: .init(width: 24, height: 2))
-            box.position = .init(x: CGFloat(screenWidth / 2) - CGFloat(i*48), y: screenHeight * 0.8)
-            box.fillColor = .red
-            box.physicsBody?.angularVelocity = .pi
+        let boxSize = screenWidth / 24
+        
+        for i in -5 ..< 6 {
+            let box = SKShapeNode(rectOf: .init(width: boxSize, height: boxSize))
+            box.physicsBody = SKPhysicsBody(rectangleOf: .init(width: boxSize, height: boxSize))
+            box.position = .init(x: CGFloat(screenWidth / 2) - CGFloat(i) * boxSize * 1.95 , y: screenHeight * 0.4)
+            box.fillColor = .clear
+            box.zRotation = CGFloat.random(in: -1 ... 1)
             box.physicsBody?.isDynamic = false
-            
+            //            box.physicsBody?.affectedByGravity = false
+            box.physicsBody?.angularDamping = .pi
+            box.physicsBody?.angularVelocity = .pi
+            box.physicsBody?.restitution = 0.2
             
             addChild(box)
         }
         
-        for i in -2 ..< 3 {
-            let box = SKShapeNode(rectOf: .init(width: 24, height: 2))
-            box.physicsBody = SKPhysicsBody(rectangleOf: .init(width: 24, height: 2))
-            box.position = .init(x: CGFloat(screenWidth / 2) - CGFloat(i*32), y: screenHeight * 0.7)
-            box.fillColor = .red
-            box.physicsBody?.angularVelocity = .pi
+        for i in -4 ..< 5 {
+            let box = SKShapeNode(rectOf: .init(width: boxSize, height: boxSize))
+            box.physicsBody = SKPhysicsBody(rectangleOf: .init(width: boxSize, height: boxSize))
+            box.position = .init(x: CGFloat(screenWidth / 2) - CGFloat(i) * boxSize * 1.9 , y: screenHeight * 0.3)
+            box.fillColor = .clear
+            box.zRotation = CGFloat.random(in: -1 ... 1)
             box.physicsBody?.isDynamic = false
-
+            //            box.physicsBody?.affectedByGravity = false
+            box.physicsBody?.angularDamping = .pi
+            box.physicsBody?.angularVelocity = .pi
+            box.physicsBody?.restitution = 0.2
+            
             addChild(box)
+        }
+        
+        for i in -5 ..< 6 {
+            let radius = CGFloat.random(in: 4 ... 6)
+            let box = SKShapeNode(circleOfRadius: radius)
+            box.physicsBody = SKPhysicsBody(circleOfRadius: radius)
+            box.position = .init(x: CGFloat(screenWidth / 2) - CGFloat(i*i), y: screenHeight * 0.7)
+            box.fillColor = .white
+            box.physicsBody?.isDynamic = true
+            box.physicsBody?.affectedByGravity = true
+            box.physicsBody?.mass = CGFloat(i*Int.random(in: 1 ... 10))
+            
+            addChild(box)
+        }
+    }
+    
+    func createCaption(view: SKView) {
+        let screenWidth = view.frame.width
+        let screenHeight = view.frame.height
+        
+        let caption = SKLabelNode(text: planet?.caption)
+        caption.name = "playLabel"
+        caption.fontSize = 24
+        caption.fontName = "Galmuri11-Bold"
+        caption.position = .init(x: screenWidth / 2, y: screenHeight * 0.8)
+        
+        addChild(caption)
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        
+        let bodyA = contact.bodyA
+        let bodyB = contact.bodyB
+        
+        if bodyA.collisionBitMask == ballCategory || bodyB.collisionBitMask == blackholeCatetory {
+            bodyB.node?.removeFromParent()
+            balls.removeAll(where: { $0.physicsBody == bodyB.node?.physicsBody})
+            if balls.count == 1 {
+                bodyA.node?.removeFromParent()
+                balls.first?.physicsBody?.affectedByGravity = false
+            }
+        }
+    }
+    override func update(_ currentTime: TimeInterval) {
+        if balls.count == 1 {
+            let zoomInAction = SKAction.scale(to: 0.3, duration: 1.5)
+            scene?.camera?.position = balls.first!.position
+            scene?.camera?.run(zoomInAction)
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if balls.count == 1 {
+            removeFromParent()
+            removeAllChildren()
+            removeAllActions()
+            let scene = GameScene(fileNamed: "GameScene")!
+            scene.scaleMode = .aspectFill
+            scene.anchorPoint = .init(x: 0.5, y: 0.5)
+            self.view?.presentScene(scene, transition: .fade(withDuration: 1))
         }
     }
 }

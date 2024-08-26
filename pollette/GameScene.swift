@@ -10,19 +10,16 @@ import GameplayKit
 
 class GameScene: SKScene {
     var planetType: PlanetType = .earth
-//    let planets = ["earth", "moon", "mustafar", "uranus"]
+    //    let planets = ["earth", "moon", "mustafar", "uranus"]
     let imageNode = SKSpriteNode()
     let numberNode = SKLabelNode(text: "2")
     let ballLabel = SKLabelNode()
     var planetIdx: Int = 0
     var numberOfPlayer = 2
     var balls: [UIColor] = [.red, .orange]
-    var colorSet: [UIColor] = [.green, .purple]
+    var colorSet: [UIColor] = [.green, .purple, .yellow, .systemMint, .magenta, .blue]
     override func sceneDidLoad() {
-        guard let screenWidth = self.scene?.frame.width else { return }
         guard let screenHeight = self.scene?.frame.height else { return }
-        
-
         
         imageNode.size = .init(width: 96, height: 96)
         imageNode.position.y = screenHeight / 4
@@ -34,7 +31,7 @@ class GameScene: SKScene {
         let gravityLabelConstraint = SKConstraint.positionY(SKRange(constantValue: imageNode.position.y + 100))
         gravityLabel.constraints = [gravityLabelConstraint]
         addChild(gravityLabel)
-
+        
         let earthNode = SKSpriteNode(imageNamed: planetType.rawValue)
         earthNode.name = planetType.rawValue
         earthNode.size = .init(width: 120, height: 120)
@@ -73,7 +70,7 @@ class GameScene: SKScene {
         let gplayerLabelConstraint = SKConstraint.positionY(SKRange(constantValue: numberNode.position.y + 100))
         playerLabel.constraints = [gplayerLabelConstraint]
         addChild(playerLabel)
-
+        
         let decreaseImage = UIImage(named: "minus.circle")
         let decreaseTexture = SKTexture(image: decreaseImage!)
         let decreaseNode = SKSpriteNode(texture: decreaseTexture)
@@ -82,7 +79,7 @@ class GameScene: SKScene {
         let decreaseNodeYConstraint = SKConstraint.positionY(SKRange(constantValue: imageNode.position.y - 300))
         decreaseNode.constraints = [decreaseNodeConstraint, decreaseNodeYConstraint]
         addChild(decreaseNode)
-
+        
         let increaseImage = UIImage(named: "plus.circle")
         let increaseNodeTexture = SKTexture(image: increaseImage!)
         let increaseNode = SKSpriteNode(texture: increaseNodeTexture)
@@ -108,8 +105,9 @@ class GameScene: SKScene {
         playButton.name = "playButton"
         playButton.fillColor = .systemMint
         playButton.strokeColor = .white
-
+        
         let playLabel = SKLabelNode(text: "START")
+        playLabel.name = "playLabel"
         playLabel.fontSize = 48
         playLabel.fontName = "Galmuri11-Bold"
         playLabel.verticalAlignmentMode = .center
@@ -142,11 +140,12 @@ class GameScene: SKScene {
             decreaseButtonAction()
             return
         }
-        if touchedNode.name == "playButton" {
+        if touchedNode.name == "playButton" || touchedNode.name == "playLabel" {
             print("playButton")
             guard let skView = self.view else { return }
             let newScene = PlayScene(size: skView.frame.size)
             newScene.planet = planetType
+            newScene.numberOfBalls = numberOfPlayer
             newScene.scaleMode = .aspectFill
             self.view?.presentScene(newScene)
         }
@@ -174,7 +173,7 @@ class GameScene: SKScene {
     
     private func increaseButtonAction() {
         numberOfPlayer += 1
-        if numberOfPlayer >= 5 {
+        if numberOfPlayer >= 9 {
             numberOfPlayer -= 1
             return
         }
