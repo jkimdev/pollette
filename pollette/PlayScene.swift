@@ -7,6 +7,7 @@
 
 import SpriteKit
 import GameplayKit
+import GoogleMobileAds
 
 public enum PlanetType: String, CaseIterable {
     case earth = "earth"
@@ -54,7 +55,9 @@ public enum PlanetType: String, CaseIterable {
     }
 }
 
-class PlayScene: SKScene, SKPhysicsContactDelegate {
+class PlayScene: SKScene, SKPhysicsContactDelegate, GADFullScreenContentDelegate {
+    private var interstitial: GADInterstitialAd?
+    
     let ballCategory: UInt32 = 0x1 << 0
     let groundCategory: UInt32 = 0x1 << 1
     let squareCategory: UInt32 = 0x1 << 2
@@ -69,6 +72,11 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.contactDelegate = self
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
         self.physicsBody?.restitution = 0.8
+        
+        GADInterstitialAd.load(withAdUnitID: "ca-app-pub-2415988675881853/9585562277", request: GADRequest()) { ad, error in
+            self.interstitial = ad
+            self.interstitial?.fullScreenContentDelegate = self
+        }
     }
     
     override func didMove(to view: SKView) {
@@ -264,10 +272,34 @@ class PlayScene: SKScene, SKPhysicsContactDelegate {
             removeFromParent()
             removeAllChildren()
             removeAllActions()
-            let scene = GameScene(fileNamed: "GameScene")!
-            scene.scaleMode = .aspectFill
-            scene.anchorPoint = .init(x: 0.5, y: 0.5)
-            self.view?.presentScene(scene, transition: .fade(withDuration: 1))
+            if let viewController = self.view?.window?.rootViewController {
+                showAd(from: viewController)
+            }
         }
+    }
+    
+    /// Tells the delegate that the ad failed to present full screen content.
+    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+        print("Ad did fail to present full screen content.")
+    }
+    
+    /// Tells the delegate that the ad will present full screen content.
+    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        print("Ad will present full screen content.")
+    }
+    
+    /// Tells the delegate that the ad dismissed full screen content.
+    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        let scene = GameScene(fileNamed: "GameScene")!
+        scene.scaleMode = .aspectFill
+        self.view?.presentScene(scene, transition: .fade(withDuration: 1))
+        print("Ad did dismiss full screens content.")
+    }
+    
+    func showAd(from viewController: UIViewController) {
+        guard let interstitial = interstitial else {
+            return print("Ad wasn't ready")
+        }
+        interstitial.present(fromRootViewController: viewController)
     }
 }
