@@ -167,7 +167,7 @@ class GameScene: SKScene {
         planetType = PlanetType.allCases[abs(planetIdx % PlanetType.allCases.count)]
         let planetNode = SKSpriteNode(imageNamed: planetType.rawValue)
         planetNode.name = planetType.rawValue
-        planetNode.size = .init(width: 96, height: 96)
+        planetNode.size = .init(width: 120, height: 120)
         imageNode.addChild(planetNode)
     }
     

@@ -66,7 +66,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate, GADFullScreenContentDelegate
     var planet: PlanetType?
     var numberOfBalls: Int?
     var balls: [SKShapeNode] = []
-    var ballColors: [UIColor] = [.red, .orange, .green, .purple, .yellow, .systemMint, .magenta, .blue].shuffled()
+    var ballColors: [UIColor] = [.red, .orange, .green, .purple, .yellow, .systemMint, .magenta, .blue]
     
     override func sceneDidLoad() {
         self.physicsWorld.contactDelegate = self
@@ -127,6 +127,7 @@ class PlayScene: SKScene, SKPhysicsContactDelegate, GADFullScreenContentDelegate
             ball.physicsBody?.mass = 0.1
             balls.append(ball)
         }
+        balls.shuffle()
         balls.forEach { addChild($0) }
     }
     
@@ -298,6 +299,9 @@ class PlayScene: SKScene, SKPhysicsContactDelegate, GADFullScreenContentDelegate
     
     func showAd(from viewController: UIViewController) {
         guard let interstitial = interstitial else {
+            let scene = GameScene(fileNamed: "GameScene")!
+            scene.scaleMode = .aspectFill
+            self.view?.presentScene(scene, transition: .fade(withDuration: 1))
             return print("Ad wasn't ready")
         }
         interstitial.present(fromRootViewController: viewController)
